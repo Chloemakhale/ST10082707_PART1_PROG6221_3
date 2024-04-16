@@ -127,27 +127,53 @@ namespace ST10082707_PART1_PROG6221_3
         public void Scale()
             {
                 // user can select a scaling method of their choice
-                Console.WriteLine("Enter one of scaling factor using a coma: 1,2 or 3 \n");
+                Console.WriteLine("Enter one of scaling factor using a coma: 0,5 or 2 or 3 \n");
                 double scale = 0;
 
                 try 
                     {
                     scale = double.Parse(Console.ReadLine());
 
-                    //
-
-
-
-
+                    // error message display if user uses different scaling input
+                    if (scale != 0.5 && scale != 2 && scale != 3)
+                    {
+                        Console.WriteLine("Invalid\n");
+                        Scale();
+                        return;
 
                     }
 
+                // calculate scaling by multiplying the quantity to the scale and making it the sum
+                for (int i = 0; i < sum.Length; i++)
+                    {
+                        sum[i] = sumAndextra[i] * scale;
+                        Scale();
+
+                    }
+                }
+
+                 // error message display takes us back to the begining of the method 
+                  catch(Exception e) 
+                      {
+                        Console.WriteLine("Invalid\n");
+                        Scale();
+
+                      }
+
+                // display once successful
+                Console.WriteLine($"Scaling complete, choose option 2 to confirm\n");
+           }
 
 
-            }
+            /// <summary>
+            /// VOID to display ingredients a user has inputes
+            /// displays all steps inputed by user 
+            /// </summary>
+            /// <return></return>
+            /// ____________________________________________________________________________________________________________________________
+            
 
 
-        
 
 
 
