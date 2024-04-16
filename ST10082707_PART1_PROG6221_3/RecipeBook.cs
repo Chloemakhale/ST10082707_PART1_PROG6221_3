@@ -39,7 +39,7 @@ namespace ST10082707_PART1_PROG6221_3
         /// </summary>
         /// ________________________________________________________________________________________________________________________________________________
 
-        public void OutputRecipe()
+        public void InputRecipe()
         {
             // Ask the user to enter the number of ingredients
 
