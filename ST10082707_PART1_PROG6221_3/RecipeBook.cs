@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -48,15 +49,15 @@ namespace ST10082707_PART1_PROG6221_3
             // converting String to int and making sure user can only enter an int
 
             try
-                {
-                     Ingredients = int.Parse(Console.ReadLine());
-                }
+            {
+                Ingredients = int.Parse(Console.ReadLine());
+            }
 
-            catch (Exception ex) 
-                {
-                       Console.WriteLine("Invalid Try Again using only INT\n");
-                       OutputRecipe();
-                }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Invalid Try Again using only INT\n");
+                OutputRecipe();
+            }
 
             //Instances to store results of the input above consisting of ingredients in Arrays
 
@@ -66,9 +67,9 @@ namespace ST10082707_PART1_PROG6221_3
 
             // repeat this block of code as many times as instructed by user input
 
-            for(int i = 0; i < Ingredients; i++) 
-          {
-            // Console.WriteLine($"Details for ingredient number {i + 1: \n"} );
+            for (int i = 0; i < Ingredients; i++)
+            {
+                // Console.WriteLine($"Details for ingredient number {i + 1: \n"} );
 
                 Console.Write("Ingredient name: \n");
                 ingredients[1] = Console.ReadLine();
@@ -79,11 +80,11 @@ namespace ST10082707_PART1_PROG6221_3
                 Console.Write("\nUnit (grams {g},milliliters {mL},kilograms {kg} etc): \n");
                 measurements[i] = Console.ReadLine();
 
-          }
+            }
 
             // the process of storing user input , to be able to weigh later
 
-             sumAndextra = new double[Ingredients];
+            sumAndextra = new double[Ingredients];
             Array.Copy(sum, sumAndextra, Ingredients);
 
             // local variable to use in exception
@@ -104,119 +105,143 @@ namespace ST10082707_PART1_PROG6221_3
                     instructions = new string[InstructionsNo];
 
                     //displays total number of instructions according to the number that is unputted by user
-                      
-                    for (int i = 0; i < InstructionsNo; i++) ;
-                        {
-                            Console.Write($"\n Instruction Number {i + 1}: \n");
 
-                        }
+                    for (int i = 0; i < InstructionsNo; i++) ;
+                    {
+                        Console.Write($"\n Instruction Number {i + 1}: \n");
+
+                    }
                 }
 
                 // error message display
                 catch (Exception e) { Console.WriteLine("Invalid, Try Again using only INT"); }
             }
 
-         /// <summary>
-         /// VOID to prompt user to select scaling methods
-         /// displays error or success pof scaling 
-         /// </summary>
-         /// <return></return>
-         /// ___________________________________________________________________________________________________________________________________
-            
-        
+            /// <summary>
+            /// VOID to prompt user to select scaling methods
+            /// displays error or success pof scaling 
+            /// </summary>
+            /// <return></return>
+            /// ___________________________________________________________________________________________________________________________________
+
+        }
         public void Scale()
+        {
+            // user can select a scaling method of their choice
+            Console.WriteLine("Enter one of scaling factor using a coma: 0,5 or 2 or 3 \n");
+            double scale = 0;
+
+            try
             {
-                // user can select a scaling method of their choice
-                Console.WriteLine("Enter one of scaling factor using a coma: 0,5 or 2 or 3 \n");
-                double scale = 0;
+                scale = double.Parse(Console.ReadLine());
 
-                try 
-                    {
-                    scale = double.Parse(Console.ReadLine());
+                // error message display if user uses different scaling input
+                if (scale != 0.5 && scale != 2 && scale != 3)
+                {
+                    Console.WriteLine("Invalid\n");
+                    Scale();
+                    return;
 
-                    // error message display if user uses different scaling input
-                    if (scale != 0.5 && scale != 2 && scale != 3)
-                    {
-                        Console.WriteLine("Invalid\n");
-                        Scale();
-                        return;
-
-                    }
+                }
 
                 // calculate scaling by multiplying the quantity to the scale and making it the sum
                 for (int i = 0; i < sum.Length; i++)
-                    {
-                        sum[i] = sumAndextra[i] * scale;
-                        Scale();
+                {
+                    sum[i] = sumAndextra[i] * scale;
+                    Scale();
 
-                    }
                 }
+            }
 
-                 // error message display takes us back to the begining of the method 
-                  catch(Exception e) 
-                      {
-                        Console.WriteLine("Invalid\n");
-                        Scale();
+            // error message display takes us back to the begining of the method 
+            catch (Exception e)
+            {
+                Console.WriteLine("Invalid\n");
+                Scale();
 
-                      }
+            }
 
-                // display once successful
-                Console.WriteLine($"Scaling complete, choose option 2 to confirm\n");
-           }
-
-
-            /// <summary>
-            /// VOID to display ingredients a user has inputes
-            /// displays all steps inputed by user 
-            /// </summary>
-            /// <return></return>
-            /// ____________________________________________________________________________________________________________________________
-            
+            // display once successful
+            Console.WriteLine($"Scaling complete, choose option 2 to confirm\n");
+        }
 
 
+        /// <summary>
+        /// VOID to display ingredients a user has inputes
+        /// displays all steps inputed by user 
+        /// </summary>
+        /// <return></return>
+        /// ____________________________________________________________________________________________________________________________
 
+    
 
+    public void Display()
+     {
+        // displays the ingredients inputed by user 
 
+        Console.WriteLine("Ingredients: \n");
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        for(int i = 0; i < ingredients.Length; i++ )
+        {
+            // sum of quantity + measurements of ingredients + the ingredients name
+            Console.WriteLine($"============={sum[1]} {measurements[1]} of {ingredients[1]}==============\n");
 
         }
+
+        // Display all steps user inputted
+        Console.WriteLine("instructions\n");
+        for (int i = 0; i < instructions.Length; i++)
+        {
+            Console.WriteLine($"========= {instructions[1]} ===========\n");
+
+        }
+
+
+     }
+
+
+    /// <summary>
+    /// void to reset the quantities to their original values before scaling 
+    /// </summary>
+    /// <return></return>
+    ///_____________________________________________________________________________________________________________________________________________________________
+    
+
+    public void Reset()
+        {
+            for (int i = 0;i < sum.Length;i++)
+            {
+                sum[i] /= 2;
+            }
+
+        Console.WriteLine($" Reset complete, choose option 2 to confirm\n");
+        }
+
+        /// <summary>
+        /// methood called to reset values back to default once option 4 is selected 
+        /// </summary>
+        /// <return></return>
+        ///____________________________________________________________________________________________________________________________________________________________________-
+
+
+        public void DELETE()
+        {
+            //resetting array values back to default once selecting option 4
+
+            ingredients = new string[0];
+            sum = new double[0];
+            measurements = new string[0];
+            instructions = new string[0];
+
+
+            Console.WriteLine($"DELETE COMPLETE, choose option 2 to confirm\n");
+
+        }
+
+
+
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        }
-    }
+}
+    //__________________________________________________END_____________________________________________________________________________________________________
