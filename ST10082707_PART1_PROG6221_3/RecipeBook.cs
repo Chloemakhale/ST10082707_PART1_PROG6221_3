@@ -14,88 +14,79 @@ namespace ST10082707_PART1_PROG6221_3
     {
         // Declarations
 
-        public string[] ingredients;
-        public double[] sum;
-        public double[] sumAndExtra;
-        public string[] measurements;
-        public string[] instructions;
+        public string[] ingredients;    // array to store ingredient names
+        public double[] sum;            // array to store the current quantity of ingredients
+        public double[] initialSum;    // array to store the original ingredient quantities
+        public string[] measurements;  // array to store units of measurement
+        public string[] instructions;  // array to store cooking instructions
 
         /// <summary>
-        /// Initializes arrays for ingredients, sums, measurements, and instructions.
+        /// Method creates and/hold instances of an array
         /// </summary>
         /// ________________________________________________________________________________________________________________________________________________
 
-        public void InitializeIngredients()
+        private List<Recipe> recipes = new List<Recipe>();
+   
+        public delegate void RecipeInputDelegate();
+
+        public void AddRecipe()
         {
-            ingredients = new string[0];
-            sum = new double[0];
-            sumAndExtra = new double[0];
-            measurements = new string[0];
-            instructions = new string[0];
+            RecipeInputDelegate inputDelegate = InputRecipe;
+            inputDelegate();
+
         }
 
         /// <summary>
         /// Prompts the user to input ingredients, quantities, measurements, and instructions.
+        /// Prompts user to enter unlimited recipes each with a name
         /// </summary>
         /// ________________________________________________________________________________________________________________________________________________
 
-        public void OutputRecipe()
+        private void InputRecipe()
         {
+
             // Ask the user to enter the number of ingredients
 
-            Console.Write("Number of Ingredients: \n");
-            int Ingredients = 0;
+            Console.Write("Recipe Name: ");
+            string recipeName = Console.ReadLine();
 
-            try
+            Recipe recipe = new Recipe(recipeName);
+
+            Console.Write("Number of Ingredients: ");
+            int numberOfIngredients = int.Parse(Console.ReadLine());
+
+            Console.Write("Number of Instructions: ");
+            int numberOfInstructions = int.Parse(Console.ReadLine());
+
+
+            for (int i = 0; i < numberOfIngredients; i++)
             {
-                Ingredients = int.Parse(Console.ReadLine());
+                Console.Write($"Ingredient name {i + 1}: ");
+                recipe.Ingredients.Add(Console.ReadLine());
+
+                Console.Write("Quantity: ");
+                double quantity = double.Parse(Console.ReadLine());
+                recipe.Quantities.Add(quantity);
+                recipe.InitialQuantities.Add(quantity);
+
+                Console.Write("Unit (grams {g}, milliliters {mL}, kilograms {kg} etc): ");
+                recipe.Measurements.Add(Console.ReadLine());
+
+                Console.Write("Calories: ");
+                recipe.Calories.Add(double.Parse(Console.ReadLine()));
+
+                Console.Write("Food Group: ");
+                recipe.FoodGroups.Add(Console.ReadLine());
             }
-            catch (Exception ex)
+
+            for (int i = 0; i < numberOfInstructions; i++)
             {
-                Console.WriteLine("Invalid input. Please enter an integer.\n");
-                OutputRecipe();
+                Console.Write($"Instruction {i + 1}: ");
+                recipe.Instructions.Add(Console.ReadLine());
             }
 
-            ingredients = new string[Ingredients];
-            sum = new double[Ingredients];
-            measurements = new string[Ingredients];
+            recipes.Add(recipe);
 
-            for (int i = 0; i < Ingredients; i++)
-            {
-                Console.Write("Ingredient name: \n");
-                ingredients[i] = Console.ReadLine();
-
-                Console.Write("\nQuantity: \n");
-                sum[i] = double.Parse(Console.ReadLine());
-
-                Console.Write("\nUnit (grams {g}, milliliters {mL}, kilograms {kg}, etc.): \n");
-                measurements[i] = Console.ReadLine();
-            }
-
-            sumAndExtra = new double[Ingredients];
-            Array.Copy(sum, sumAndExtra, Ingredients);
-
-            int InstructionsNo = 0;
-
-            while (InstructionsNo == 0)
-            {
-                try
-                {
-                    Console.Write("\nNumber of instructions needed: \n");
-                    InstructionsNo = int.Parse(Console.ReadLine());
-
-                    instructions = new string[InstructionsNo];
-
-                    for (int i = 0; i < InstructionsNo; i++)
-                    {
-                        Console.Write($"\nInstruction Number {i + 1}: \n");
-                    }
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("Invalid input. Please enter an integer.\n");
-                }
-            }
         }
 
         /// <summary>
@@ -103,35 +94,30 @@ namespace ST10082707_PART1_PROG6221_3
         /// </summary>
         /// ________________________________________________________________________________________________________________________________________________
 
-        public void Scale()
+        public void ScaleRecipe(int recipeIndex, double scale)
         {
-            Console.WriteLine("Enter a scaling factor using a comma-separated value: 0.5, 2, or 3 \n");
-            double scale = 0;
-
-            try
+            if (recipeIndex < 0 || recipeIndex >= recipes.Count)
             {
-                scale = double.Parse(Console.ReadLine());
-
-                if (scale != 0.5 && scale != 2 && scale != 3)
-                {
-                    Console.WriteLine("Invalid scaling factor.\n");
-                    Scale();
-                    return;
-                }
-
-                for (int i = 0; i < sum.Length; i++)
-                {
-                    sum[i] = sumAndExtra[i] * scale;
-                }
-
-                Console.WriteLine($"Scaling complete. Choose option 2 to confirm.\n");
+                Console.WriteLine("Invalid recipe index.");
+                return;
             }
-            catch (Exception e)
+
+            if (scale != 0.5 && scale != 2 && scale != 3)
             {
-                Console.WriteLine("Invalid input.\n");
-                Scale();
+                Console.WriteLine("Invalid scaling factor. Please enter 0.5, 2, or 3.");
+                return;
             }
+
+            Recipe recipe = recipes[recipeIndex];
+
+            for (int i = 0; i < recipe.Quantities.Count; i++)
+            {
+                recipe.Quantities[i] = recipe.InitialQuantities[i] * scale;
+            }
+
+            Console.WriteLine("Scaling complete. Choose option 2 to confirm.");
         }
+
 
         /// <summary>
         /// Displays the ingredients and instructions entered by the user.
@@ -140,47 +126,75 @@ namespace ST10082707_PART1_PROG6221_3
 
         public void Display()
         {
-            Console.WriteLine("Ingredients: \n");
+            var sortedRecipes = recipes.OrderBy(r => r.Name).ToList();
 
-            for (int i = 0; i < ingredients.Length; i++)
+            foreach (var recipe in sortedRecipes)
             {
-                Console.WriteLine($"============={sum[i]} {measurements[i]} of {ingredients[i]}==============\n");
+                Console.WriteLine($"\n--- Recipe: {recipe.Name}---");
+                Console.WriteLine("Ingredients: ");
+
+                for (int i = 0; i < recipe.Ingredients.Count; i++)
+                {
+                    Console.WriteLine($"{i + 1}. {recipe.Ingredients[i]}: {recipe.Measurements[i]} {recipe.Quantities[i]}, Clories: {recipe.Calories[i]}, Food Group: {recipe.FoodGroups[i]}");
+                }
+
+                Console.WriteLine("Instructions: ");
+
+                for (int i = 0; i < recipe.Instructions.Count; i++)
+                {
+                    Console.WriteLine($"{i + 1}. {instructions[i]} ");
+                }
+                double totalCalories = recipe.GetTotalCalories();
+                Console.WriteLine($"Total Calories: {recipe.GetTotalCalories()}");
+
+                if (totalCalories > 300)
+                {
+                    Console.WriteLine("This recipe exceeds 300 calories!");
+
+                }
             }
 
-            Console.WriteLine("Instructions\n");
-
-            for (int i = 0; i < instructions.Length; i++)
-            {
-                Console.WriteLine($"========= {instructions[i]} ===========\n");
-            }
+            /// <summary>
+            /// Resets the quantities of ingredients to their original values before scaling.
+            /// </summary>
+            /// ________________________________________________________________________________________________________________________________________________
         }
 
-        /// <summary>
-        /// Resets the quantities of ingredients to their original values before scaling.
-        /// </summary>
-        /// ________________________________________________________________________________________________________________________________________________
-        public void Reset()
-        {
-            for (int i = 0; i < sum.Length; i++)
+            public void Reset(int recipeIndex)
             {
-                sum[i] = sumAndExtra[i] / 2;
+                if (recipeIndex < 0 || recipeIndex >= recipes.Count)
+                {
+                    Console.WriteLine("Invalid recipe index.");
+                    return;
+                }
+
+                Recipe recipe = recipes[recipeIndex];
+
+                for (int i = 0; i < recipe.Quantities.Count; i++)
+                {
+                    recipe.Quantities[i] = recipe.InitialQuantities[i];
+                }
+
+                Console.WriteLine("Reset complete. Choose option 2 to confirm.");
             }
 
-            Console.WriteLine($"Reset complete. Choose option 2 to confirm.\n");
-        }
+            /// <summary>
+            /// Delete all recipes
+            /// </summary>
+            /// _______________________________________________________________________________________
+        
+            public void DELETE()
+            {
+                recipes.Clear();
+                Console.WriteLine("All recipes deleted. Choose option 2 to confirm. ");
 
-        /// <summary>
-        /// Resets all arrays to their default values when option 4 is selected.
-        /// </summary>
-        public void DELETE()
+            }
+
+        internal void Reset()
         {
-            ingredients = new string[0];
-            sum = new double[0];
-            measurements = new string[0];
-            instructions = new string[0];
-
-            Console.WriteLine($"DELETE COMPLETE. Choose option 2 to confirm.\n");
+            throw new NotImplementedException();
         }
     }
-}
-//_________________________________________________END________________________________________________________________________________
+    }
+
+//_________________________________________________END Part 2_______________________________________________________________________________

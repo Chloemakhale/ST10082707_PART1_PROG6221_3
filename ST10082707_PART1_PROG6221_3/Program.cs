@@ -8,9 +8,11 @@ namespace ST10082707_PART1_PROG6221_3
 {
     internal class Program
     {
+        private static object recipeBook;
+
         static void Main(string[] args)
         {
-            // Create an instance of the RecipeBook class
+            // Created an instance of the RecipeBook class
             RecipeBook recipes = new RecipeBook();
 
             // Main menu loop
@@ -21,12 +23,13 @@ namespace ST10082707_PART1_PROG6221_3
                 Console.WriteLine("=======================================================================================\n");
 
                 // Display menu options
-                Console.WriteLine("1: ENTER RECIPE DETAILS\n");
-                Console.WriteLine("2: DISPLAY DETAILS\n");
-                Console.WriteLine("3: SCALE RECIPE\n");
-                Console.WriteLine("4: RESET AMOUNT\n");
+                Console.WriteLine("\n1. Add Recipe");
+                Console.WriteLine("2: DISPLAY DETAILS");
+                Console.WriteLine("3: SCALE RECIPE");
+                Console.WriteLine("4: RESET Recipe");
                 Console.WriteLine("5: DELETE RECIPE ENTRY\n");
                 Console.WriteLine("6: EXIT");
+                Console.Write("Choose an option: ");
 
                 // Read user input
                 string choice = Console.ReadLine();
@@ -35,7 +38,7 @@ namespace ST10082707_PART1_PROG6221_3
                 {
                     // Option to enter recipe details
                     case "1":
-                        recipes.InputRecipe();
+                        recipes.AddRecipe();
                         break;
 
                     // Option to display recipe details
@@ -45,16 +48,11 @@ namespace ST10082707_PART1_PROG6221_3
 
                     // Option to scale the recipe
                     case "3":
-                        Console.WriteLine("Enter scaling factor (0.5, 2, or 3): ");
-                        double factor;
-                        if (double.TryParse(Console.ReadLine(), out factor))
-                        {
-                            recipes.Scale();
-                        }
-                        else
-                        {
-                            Console.WriteLine("Invalid scaling factor.");
-                        }
+                        Console.Write("Enter recipe index to scale: ");
+                        int scaleIndex = int.Parse(Console.ReadLine());
+                        Console.Write("Enter scaling factor (0.5, 2, or 3): ");
+                        double scaleFactor = double.Parse(Console.ReadLine());
+                        recipes.ScaleRecipe(scaleIndex, scaleFactor);
                         break;
 
                     // Option to reset quantities
